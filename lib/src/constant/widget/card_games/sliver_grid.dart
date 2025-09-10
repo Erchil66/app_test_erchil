@@ -1,7 +1,9 @@
 import 'package:apptest/src/constant/widget/card_games/view_cards.dart';
+import 'package:apptest/src/page/home.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CategoryGridSliver extends StatelessWidget {
+class CategoryGridSliver extends ConsumerWidget {
   const CategoryGridSliver({
     super.key,
     required this.label,
@@ -20,9 +22,15 @@ class CategoryGridSliver extends StatelessWidget {
   final double childAspectRatio;
 
   @override
-  Widget build(BuildContext context) {
-    final totalRaw = label == "BUSCAR" ? 10 : (bannerCount ?? 0);
-    final itemCount = totalRaw.clamp(0, 20);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final total = label == "BUSCAR" ? 10 : (bannerCount ?? 0);
+
+    final visible = ref.watch(visibleCountProvider(label));
+    final itemCount = visible.clamp(0, total);
+
+    if (total == 0) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
 
     return SliverPadding(
       padding: padding,

@@ -1,5 +1,6 @@
 import 'package:apptest/src/constant/widget/appbar/appbar.dart';
 import 'package:apptest/src/constant/widget/bottom_bar/bottom_bar.dart';
+import 'package:apptest/src/constant/widget/card_games/percent_view.dart';
 import 'package:apptest/src/constant/widget/card_games/sliver_grid.dart';
 import 'package:apptest/src/constant/widget/carousel/carousel.dart';
 import 'package:apptest/src/constant/widget/category/category.dart';
@@ -14,6 +15,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 final categorySelected = StateProvider<CategoryList>((ref) => categlists.first);
 final currentBottomSelected = StateProvider<BottomBarList>(
   (ref) => bottomList.last,
+);
+final visibleCountProvider = StateProvider.family<int, String>(
+  (ref, sectionKey) => 10,
 );
 
 final isCollapse = StateProvider((x) => false);
@@ -34,12 +38,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     final collapse = ref.watch(isCollapse);
     return Scaffold(
       key: _scaffoldKey,
-      appBar: Appbartest(
-        isCollapse: collapse,
-        callback: () {
-          _scaffoldKey.currentState!.openDrawer();
-        },
-      ),
+      appBar: collapse == true
+          ? null
+          : Appbartest(
+              callback: () {
+                _scaffoldKey.currentState!.openDrawer();
+              },
+            ),
       drawer: DrawerView(),
       body: SafeArea(
         child: Stack(
@@ -89,11 +94,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                     spacing: 15,
                     childAspectRatio: 1,
                     padding: EdgeInsets.only(
-                      bottom: 130,
+                      bottom: 10,
                       left: 20,
                       right: 20,
                       top: 10,
                     ),
+                  ),
+                  CategoryLoadMoreSliver(
+                    label: category.label ?? "",
+                    bannerCount: category.bannerCount,
+                    step: 10,
                   ),
                 ],
               ),
